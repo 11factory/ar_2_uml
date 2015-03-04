@@ -23,10 +23,11 @@ class Ar2Uml::AppModel
     @active_record_model.reflect_on_all_associations(:belongs_to).map do |belongs_to|
       belonging_name = belongs_to.name.to_s
       belonging_classified_name = (belongs_to.options[:class_name] || belonging_name).classify
+      belonging_class = @app_models_repository.all.select do |model| 
+        model.to_s == belonging_classified_name || model.to_s.end_with?("::#{belonging_classified_name}")
+      end.first
       { 
-        belonging_name.to_sym => @app_models_repository.all.select do |model| 
-          model.to_s == belonging_classified_name || model.to_s.end_with?("::#{belonging_classified_name}")
-        end.first
+        belonging_name.to_sym => Ar2Uml::AppModel.new(belonging_class)
       }
     end
   end
