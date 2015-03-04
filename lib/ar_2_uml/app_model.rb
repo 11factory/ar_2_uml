@@ -31,4 +31,8 @@ class Ar2Uml::AppModel
       }
     end
   end
+  
+  def active_record_model
+    @active_record_model
+  end
 end
