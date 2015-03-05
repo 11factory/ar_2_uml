@@ -12,7 +12,7 @@ class Ar2Uml::NodeFromAppModelBuilderTest < Minitest::Test
     app_model = stub("app model", @default_model_stub)
     assert_equal("t1s", node_for_model(app_model).label)
   end
-  
+
   def test_use_model_attributes_as_node_attributes
     app_model = stub("app model", @default_model_stub.merge(model_attributes:{a: :int, b: :float}))
     assert_equal({a: :int, b: :float}, node_for_model(app_model).attributes)
@@ -20,15 +20,34 @@ class Ar2Uml::NodeFromAppModelBuilderTest < Minitest::Test
 
   def test_deep_build_of_children_nodes_with_edges
     bar_model = stub("bar model", @default_model_stub.merge(table_name:"bars"))
-    foo_model = stub("foo model", @default_model_stub.merge(table_name:"foos", belonging_models:[{bar:bar_model}]))
-    parent_model = stub("parent model", @default_model_stub.merge(belonging_models:[{foo:foo_model}]))
+    foo_model = stub("foo model", @default_model_stub.merge(
+      table_name:"foos",
+      belonging_models:[{relation_name:"bar", model:bar_model}]))
+    parent_model = stub("parent model", @default_model_stub.merge(
+      belonging_models:[{relation_name:"foo_rel", model:foo_model}]))
     node = node_for_model(parent_model)
     assert_equal(1, node.edges.count)
+    assert_equal("foo_rel", node.edges.first.label)
     assert_equal(node, node.edges.first.from)
     assert_equal("foos", node.edges.first.to.label)
     assert_equal("bars", node.edges.first.to.edges.first.to.label)
   end
 
+  def test_handle_self_belonging_associations
+    foo_model = stub("foo model")
+    foo_model.stubs(@default_model_stub.merge(
+      table_name:"foos", 
+      belonging_models:[{relation_name:"foo", model:foo_model}]))
+    parent_model = stub("parent model", @default_model_stub.merge(
+      belonging_models:[{relation_name:"foo", model:foo_model}]))
+    node = node_for_model(parent_model)
+    assert_equal(1, node.edges.count)
+    assert_equal(node, node.edges.first.from)
+    assert_equal("foos", node.edges.first.to.label)
+    assert_equal("foos", node.edges.first.to.edges.first.to.label)
+  end
+  
+  private
   
   def node_for_model(model)
     builder = Ar2Uml::NodeFromAppModelBuilder.new(model)

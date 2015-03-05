@@ -27,7 +27,8 @@ class Ar2Uml::AppModel
         model.to_s == belonging_classified_name || model.to_s.end_with?("::#{belonging_classified_name}")
       end.first
       { 
-        belonging_name.to_sym => Ar2Uml::AppModel.new(belonging_class)
+        model: Ar2Uml::AppModel.new(belonging_class),
+        relation_name: belonging_name.to_s
       }
     end
   end

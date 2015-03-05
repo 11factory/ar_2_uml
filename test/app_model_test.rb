@@ -10,13 +10,15 @@ class Ar2Uml::AppModelsTest < Minitest::Test
   end
 
   def test_get_belonging_informations
-    belonging_models = app_model(Tt2).belonging_models
-    assert_equal(Ar2Uml::AppModelsTest::Tt1, belonging_models.first[:tt1].active_record_model)
+    belonging_model = app_model(Tt2).belonging_models.first
+    assert_equal(Ar2Uml::AppModelsTest::Tt1, belonging_model[:model].active_record_model)
+    assert_equal("tt1", belonging_model[:relation_name])
   end
   
   def test_get_aliased_belonging
-    belonging_models = app_model(Tt3).belonging_models
-    assert_equal(Ar2Uml::AppModelsTest::Tt1, belonging_models.first[:foo].active_record_model)
+    belonging_model = app_model(Tt3).belonging_models.first
+    assert_equal(Ar2Uml::AppModelsTest::Tt1, belonging_model[:model].active_record_model)
+    assert_equal("foo", belonging_model[:relation_name])
   end
 
   def test_get_table_name
