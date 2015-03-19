@@ -21,16 +21,15 @@ class Ar2Uml::AppModel
   
   def belonging_models
     @active_record_model.reflect_on_all_associations(:belongs_to).map do |belongs_to|
+      next if(belongs_to.options.has_key?(:polymorphic))
       belonging_name = belongs_to.name.to_s
       belonging_classified_name = (belongs_to.options[:class_name] || belonging_name).classify
-      belonging_class = @app_models_repository.all.select do |model| 
-        model.to_s == belonging_classified_name || model.to_s.end_with?("::#{belonging_classified_name}")
-      end.first
+      belonging_class = @app_models_repository.load(belonging_classified_name)
       { 
         model: Ar2Uml::AppModel.new(belonging_class),
         relation_name: belonging_name.to_s
       }
-    end
+    end.compact
   end
   
   def active_record_model

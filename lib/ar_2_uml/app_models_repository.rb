@@ -7,9 +7,7 @@ class Ar2Uml::AppModelsRepository
   end
   
   def load(object_name)
-    all.select {|object|
-      object.to_s == object_name
-    }.first || object_name.constantize rescue nil
+    object_name.constantize rescue nil
   end
   
 end
