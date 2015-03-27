@@ -27,6 +27,6 @@ class Ar2Uml::UMLNodeVisitor < Ar2Uml::UMLVisitor
   private
   
   def node_already_outputed?(node)
-    @visited_node_stack.include?(node)
+    @visited_node_stack.map(&:label).include?(node.label)
   end
 end

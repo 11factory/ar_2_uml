@@ -46,5 +46,16 @@ class Ar2Uml::UMLNodeVisitorTest < Ar2Uml::UMLVisitorTest
       #{edge_io.string}
     ))
   end
+  
+  def test_output_self_belonging_edges
+    node_a = Ar2Uml::Node.new(label:'a')
+    node_a.edges << Ar2Uml::Edge.new(from:node_a, to:node_a)
+    edge_io = StringIO.new
+    node_a.edges.first.accept(Ar2Uml::UMLEdgeVisitor.new(edge_io))
+    assert_output_for_item(node_a, %Q(
+      a [label="{a|\\l}"]
+      #{edge_io.string}
+    ))
+  end
     
 end
