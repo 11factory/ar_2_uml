@@ -29,6 +29,7 @@ class Ar2Uml::NodeFromAppModelBuilder
       @node.edges << edge
       belonging_node.incoming_edges << edge
     end
+    @node_stack = []
   end
   
   private

@@ -31,5 +31,20 @@ class Ar2Uml::UMLNodeVisitorTest < Ar2Uml::UMLVisitorTest
       #{edge_io.string}
     ))
   end
+  
+  def test_output_nodes_edges_with_cycles
+    node_a = Ar2Uml::Node.new(label:'a')
+    node_b = Ar2Uml::Node.new(label:'b')
+    node_a.edges << Ar2Uml::Edge.new(from:node_a, to:node_b)
+    node_b.edges << Ar2Uml::Edge.new(from:node_b, to:node_a)
+    edge_io = StringIO.new
+    node_b.edges.first.accept(Ar2Uml::UMLEdgeVisitor.new(edge_io))
+    node_a.edges.first.accept(Ar2Uml::UMLEdgeVisitor.new(edge_io))
+    assert_output_for_item(node_a, %Q(
+      a [label="{a|\\l}"]
+      b [label="{b|\\l}"]
+      #{edge_io.string}
+    ))
+  end
     
 end
