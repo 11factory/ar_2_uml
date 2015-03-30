@@ -5,11 +5,11 @@ class Ar2Uml::UMLNodeVisitor < Ar2Uml::UMLVisitor
 
   def initialize(output_io)
     @output_io = output_io
-    @visited_node_stack = []
+    @visited_node_stack = {}
   end
   
   def visit(node)
-    @visited_node_stack << node
+    @visited_node_stack[node.label] = node
     node_attributes = []
     node.attributes.each_pair do |name, type|
       node_attributes << "+#{name}: #{type}"
@@ -27,6 +27,6 @@ class Ar2Uml::UMLNodeVisitor < Ar2Uml::UMLVisitor
   private
   
   def node_already_outputed?(node)
-    @visited_node_stack.map(&:label).include?(node.label)
+    @visited_node_stack.has_key?(node.label)
   end
 end
