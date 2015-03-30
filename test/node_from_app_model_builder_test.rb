@@ -34,19 +34,6 @@ class Ar2Uml::NodeFromAppModelBuilderTest < Minitest::Test
     assert_equal("bars", node.edges.first.to.edges.first.to.label)
   end
 
-  def test_record_incoming_edges_too
-    child_model = stub("child model", @default_model_stub.merge(table_name:"childs"))
-    parent_model = stub("parent model", @default_model_stub.merge(
-      belonging_models:[{relation_name:"child", model:child_model}]))
-    parent_node = node_for_model(parent_model)
-    assert_equal(1, parent_node.edges.count)
-    child_node = parent_node.edges.first.to
-    assert_equal("childs", child_node.label)
-    assert_equal(1, child_node.incoming_edges.count)
-    assert_equal(parent_node, child_node.incoming_edges.first.from)
-  end
-
-
   def test_handle_self_belonging_associations
     foo_model = stub("foo model")
     foo_model.stubs(@default_model_stub.merge(
@@ -62,6 +49,7 @@ class Ar2Uml::NodeFromAppModelBuilderTest < Minitest::Test
   end
   
   def test_handle_indirect_self_belonging_associations
+    
     bar_model = stub("bar model")
     foo_model = stub("foo model")
     foo_model.stubs(@default_model_stub.merge(
