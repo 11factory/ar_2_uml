@@ -15,6 +15,12 @@ class Ar2Uml::UMLNodeVisitorTest < Ar2Uml::UMLVisitorTest
     node = Ar2Uml::Node.new(label:"Pouet", attributes:{a: :integer, b: :string})
     assert_output_for_item(node, %Q(pouet [label="{Pouet|+a: integer\\l+b: string\\l}"]))
   end
+  
+  def test_output_node_label_and_can_hide_attributes
+    @visitor.hide_attributes = true
+    node = Ar2Uml::Node.new(label:"Pouet", attributes:{a: :integer, b: :string})
+    assert_output_for_item(node, %Q(pouet [label="{Pouet}"]))
+  end
 
   def test_nodify_node_label
     node = Ar2Uml::Node.new(label:"Name with spaces")
@@ -57,5 +63,24 @@ class Ar2Uml::UMLNodeVisitorTest < Ar2Uml::UMLVisitorTest
       #{edge_io.string}
     ))
   end
-    
+      
 end
+
+
+
+# require 'ar_2_uml/graph/graph'
+# require 'ar_2_uml/dot/uml_graph_visitor'
+# b=Ar2Uml::NodeFromAppModelBuilder.new(Ar2Uml::AppModel.new(Warning))
+# b.process
+# node = b.node
+# b=nil
+# g=Ar2Uml::Graph.new([node])
+# File.open("warning.dot","w") do |io|
+#   v=Ar2Uml::UMLGraphVisitor.new(io)
+#   begin
+#     g.accept(v)
+#   rescue SystemStackError
+#     e=$!
+#     binding.pry
+#   end
+# end
