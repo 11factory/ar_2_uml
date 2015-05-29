@@ -11,7 +11,7 @@ class Ar2Uml::NodeFromAppModelBuilder
   end
   
   def process
-    candid_node_label = @app_model.table_name
+    candid_node_label = @app_model.table_name rescue return
     if((@node = existing_node_in_call_stack_with_label(candid_node_label)))
       return
     end
