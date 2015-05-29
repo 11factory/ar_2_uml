@@ -3,7 +3,7 @@ require_relative 'graph/node'
 class Ar2Uml::NodeFromAppModelBuilder
   attr_reader :node
   
-  def initialize(app_model, limit_first_belongings, node_stack = {}, level = 0)
+  def initialize(app_model, limit_first_belongings = false, node_stack = {}, level = 0)
     @app_model = app_model
     @node_stack = node_stack
     @level = level
