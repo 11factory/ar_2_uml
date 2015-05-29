@@ -47,27 +47,39 @@ class Ar2Uml::NodeFromAppModelBuilderTest < Minitest::Test
     assert_equal("foos", node.edges.first.to.label)
     assert_equal("foos", node.edges.first.to.edges.first.to.label)
   end
-  
+
   def test_handle_indirect_self_belonging_associations
-    
     bar_model = stub("bar model")
     foo_model = stub("foo model")
     foo_model.stubs(@default_model_stub.merge(
-      table_name:"foos", 
+      table_name:"foos",
       belonging_models:[{relation_name:"bar", model:bar_model}]))
     bar_model.stubs(@default_model_stub.merge(
-      table_name:"bars", 
+      table_name:"bars",
       belonging_models:[{relation_name:"foo", model:foo_model}]))
     node = node_for_model(foo_model)
     assert_equal(1, node.edges.count)
     assert_equal(node, node.edges.first.to.edges.first.to)
     assert_equal("foos", node.edges.first.to.edges.first.to.label)
   end
+
+  def test_can_limit_to_first_belongings
+    bar_model = stub("bar model", @default_model_stub.merge(table_name:"bars"))
+    foo_model = stub("foo model", @default_model_stub.merge(
+      table_name:"foos",
+      belonging_models:[{relation_name:"bar", model:bar_model}]))
+    parent_model = stub("parent model", @default_model_stub.merge(
+      belonging_models:[{relation_name:"foo_rel", model:foo_model}]))
+    node = node_for_model(parent_model)
+    assert_equal(1, node.edges.first.to.edges.count)
+    node = node_for_model(parent_model, limit_first_belongings: true)
+    assert_equal(0, node.edges.first.to.edges.count)
+  end
   
   private
   
-  def node_for_model(model)
-    builder = Ar2Uml::NodeFromAppModelBuilder.new(model)
+  def node_for_model(model, options = {})
+    builder = Ar2Uml::NodeFromAppModelBuilder.new(model, options[:limit_first_belongings])
     builder.process
     builder.node
   end
