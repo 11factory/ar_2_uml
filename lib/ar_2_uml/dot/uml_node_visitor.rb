@@ -30,6 +30,6 @@ class Ar2Uml::UMLNodeVisitor < Ar2Uml::UMLVisitor
   private
   
   def node_already_outputed?(node)
-    @visited_node_stack.has_key?(node.label)
+    @visited_node_stack.has_key?(node.label) rescue binding.pry
   end
 end
